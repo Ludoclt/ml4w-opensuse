@@ -23,6 +23,7 @@ git curl wget rsync unzip tar jq gum make gcc cargo
 inotify-tools libnotify-tools brightnessctl
 grim slurp wl-clipboard cliphist ImageMagick
 fastfetch btop fzf eza xdg-user-dirs xdg-utils rsvg-convert
+kitty-terminfo    # lets root programs (sudo nano...) handle TERM=xterm-kitty
 
 # --- Walker (installed in ~/.local with --no-deps: its libraries go here) ---
 libgtk-4-1 libgtk4-layer-shell0 libpoppler-glib8
@@ -43,7 +44,7 @@ bluez blueman
 
 # --- Session: polkit agent (password prompts), keyring, battery,
 #     power profiles (Quickshell bar module) ---
-hyprpolkitagent gnome-keyring upower power-profiles-daemon
+hyprpolkitagent gnome-keyring gnome-keyring-pam upower power-profiles-daemon
 
 # --- Files: USB drive mounting, trash, network locations in Nautilus ---
 gvfs gvfs-backends udisks2
