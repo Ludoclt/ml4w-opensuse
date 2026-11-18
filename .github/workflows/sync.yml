@@ -1,0 +1,81 @@
+name: Sync ML4W
+
+on:
+  schedule:
+    - cron: "17 4 * * *" # every day, 04:17 UTC
+  push:
+    branches: [opensuse]
+    paths: ["overlay/**", "tools/**"]
+  workflow_dispatch:
+    inputs:
+      accept_tag:
+        description: "Upstream version reviewed and accepted (e.g. 2.18)"
+        required: false
+        default: ""
+      accept_subprojects:
+        description: "Accept the new subproject install scripts (after review)"
+        type: boolean
+        default: false
+      force_build:
+        description: "Rebuild and republish even without changes"
+        type: boolean
+        default: false
+
+concurrency:
+  group: sync-ml4w
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: opensuse
+          fetch-depth: 0
+
+      - name: Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Synchronize
+        id: sync
+        env:
+          FORK_URL: https://github.com/${{ github.repository }}.git
+          ACCEPT_TAG: ${{ inputs.accept_tag }}
+          ACCEPT_SUBPROJECTS: ${{ inputs.accept_subprojects }}
+          FORCE_BUILD: ${{ github.event_name == 'push' || inputs.force_build }}
+          REPORT: ${{ runner.temp }}/report.md
+        run: tools/sync.sh
+
+      - name: Open or update the review issue
+        if: steps.sync.outputs.blocked == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPORT: ${{ runner.temp }}/report.md
+          UPSTREAM_TAG: ${{ steps.sync.outputs.upstream }}
+        run: |
+          gh label create ml4w-review --color FBCA04 --description "Review needed" 2> /dev/null || true
+          title="Review needed: ML4W $UPSTREAM_TAG"
+          num=$(gh issue list --label ml4w-review --state open --json number,title \
+                  -q ".[] | select(.title == \"$title\") | .number" | head -n 1)
+          if [ -n "$num" ]; then
+            gh issue edit "$num" --body-file "$REPORT"
+          else
+            gh issue create --title "$title" --label ml4w-review --body-file "$REPORT"
+          fi
+
+      - name: Close resolved issues
+        if: steps.sync.outputs.blocked == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISHED: ${{ steps.sync.outputs.published }}
+        run: |
+          for num in $(gh issue list --label ml4w-review --state open --json number -q '.[].number'); do
+            gh issue close "$num" --comment "Published: ML4W $PUBLISHED on the stable branch."
+          done
