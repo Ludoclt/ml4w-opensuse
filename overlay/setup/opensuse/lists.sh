@@ -2,6 +2,7 @@
 # ------------------------------------------------------------------
 # ml4w-opensuse: helpers shared by the setup scripts and CI.
 # This file is sourced; it must not execute anything on its own.
+# Only bash, sed and tr are used: minimal Tumbleweed images have no awk.
 # ------------------------------------------------------------------
 
 SUSE_DIR="${SUSE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
@@ -26,14 +27,21 @@ suse_extra_packages() {
 
 # Extra repositories: "alias priority url"
 suse_repos() {
-    sed 's/#.*//' "$SUSE_DIR/repos.txt" | awk -F'|' 'NF==3 {
-        gsub(/[[:space:]]/, "", $1); gsub(/[[:space:]]/, "", $2); gsub(/[[:space:]]/, "", $3)
-        print $1, $2, $3 }'
+    local line alias prio url
+    while IFS= read -r line || [ -n "$line" ]; do
+        line=${line%%#*}
+        [[ "$line" == *"|"*"|"* ]] || continue
+        IFS='|' read -r alias prio url <<< "$line"
+        echo "${alias//[[:space:]]/} ${prio//[[:space:]]/} ${url//[[:space:]]/}"
+    done < "$SUSE_DIR/repos.txt"
 }
 
 # Pinned ML4W subproject: "repository file commit" for a given name
 suse_lock_get() {
-    awk -v n="$1" '$1 == n { print $2, $3, $4 }' "$SUSE_DIR/subprojects.lock"
+    local name repo file sha
+    while read -r name repo file sha; do
+        [ "$name" = "$1" ] && { echo "$repo $file $sha"; return 0; }
+    done < "$SUSE_DIR/subprojects.lock"
 }
 
 # Run a subproject's install script at its pinned commit

@@ -81,7 +81,18 @@ tools/build.sh "$work/up" "$FORK_URL" stable
 
 if [ "${SKIP_VALIDATE:-false}" != true ]; then
     echo "Validating in $TW_IMAGE..."
-    if ! docker run --rm -v "$work/up/setup/opensuse:/v:ro" "$TW_IMAGE" bash /v/validate.sh > "$work/validate.txt" 2>&1; then
+    rc=0
+    docker run --rm -v "$work/up/setup/opensuse:/v:ro" "$TW_IMAGE" bash /v/validate.sh > "$work/validate.txt" 2>&1 || rc=$?
+    if [ "$rc" -eq 2 ]; then
+        # Infrastructure problem (mirror being synced): nothing to fix,
+        # no issue, nothing published; the next run will try again.
+        cat "$work/validate.txt"
+        echo "Tumbleweed repositories unavailable, publication postponed to the next run."
+        out blocked retry
+        out published "$old"
+        exit 0
+    fi
+    if [ "$rc" -ne 0 ]; then
         cat "$work/validate.txt"
         report "## Tumbleweed validation failed (ML4W $target)" "" '```' \
             "$(grep -E '^(✗|ℹ)' "$work/validate.txt" || tail -n 40 "$work/validate.txt")" '```' ""
