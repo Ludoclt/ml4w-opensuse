@@ -1,0 +1,68 @@
+# ------------------------------------------------------------------
+# System packages required by ML4W on openSUSE Tumbleweed.
+# Installed in a single transaction (zypper install --no-recommends)
+# on every install AND update (already installed = nothing happens).
+#
+# Rules:
+#  - one or more names per line, "#" starts a comment;
+#  - by default a package MUST exist in the official repositories,
+#    otherwise CI fails;
+#  - a package missing from the official repositories goes alone on its
+#    line, followed by "# @alias" (alias declared in repos.txt).
+# ------------------------------------------------------------------
+
+# --- Hyprland and its ecosystem ---
+hyprland hyprlock hypridle hyprpicker hyprsunset hyprland-qtutils
+xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+
+# --- Desktop shell, bar, notifications, launcher, wallpaper ---
+quickshell    # @danklinux
+awww          # @alxhr0
+waybar rofi SwayNotificationCenter
+
+# --- Tools used by the ML4W scripts and the installer ---
+git curl wget rsync unzip tar jq gum make gcc cargo
+inotify-tools libnotify-tools brightnessctl
+grim slurp wl-clipboard cliphist ImageMagick
+fastfetch btop fzf eza xdg-user-dirs xdg-utils rsvg-convert
+
+# --- Walker (installed in ~/.local with --no-deps: its libraries go here) ---
+libgtk-4-1 libgtk4-layer-shell0 libpoppler-glib8
+
+# --- nwg-displays (installed with pipx --system-site-packages) ---
+python3-pipx python3-gobject python3-gobject-Gdk python3-i3ipc
+gtk3 gtk-layer-shell typelib-1_0-Gtk-3_0 typelib-1_0-GtkLayerShell-0_1
+
+# --- Wi-Fi / network: service, nmtui, graphical editor, tray icon ---
+NetworkManager NetworkManager-tui NetworkManager-connection-editor NetworkManager-applet
+
+# --- Audio: PipeWire (wpctl, pactl), mixer, media keys ---
+pipewire pipewire-pulseaudio pipewire-alsa wireplumber pulseaudio-utils
+pavucontrol playerctl
+
+# --- Bluetooth: service + GUI ---
+bluez blueman
+
+# --- Session: polkit agent (password prompts), keyring, battery,
+#     power profiles (Quickshell bar module) ---
+hyprpolkitagent gnome-keyring upower power-profiles-daemon
+
+# --- Files: USB drive mounting, trash, network locations in Nautilus ---
+gvfs gvfs-backends udisks2
+
+# --- Qt / GTK theming ---
+qt6ct nwg-look qt6-wayland libqt5-qtwayland libQt6Svg6
+qt6-multimedia qt6-multimedia-imports qt6-qt5compat-imports
+gnome-themes-extras kf6-breeze-icons libsecret
+
+# --- Fonts (including basic text and emoji fonts for the browser) ---
+fontawesome-fonts jetbrains-mono-fonts
+noto-sans-fonts noto-coloremoji-fonts
+
+# --- Browser (Brave's official repository, see repos.txt) ---
+brave-browser    # @brave
+
+# --- Optional: uncomment if needed ---
+# tesseract-ocr tesseract-ocr-traineddata-english   # text extraction from a screenshot (hypr/scripts/text-extractor.sh)
+# ddcutil                                           # external monitor brightness over DDC
+# zsh                                               # if you switch from bash to zsh

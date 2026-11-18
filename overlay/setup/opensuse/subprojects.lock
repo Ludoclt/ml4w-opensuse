@@ -1,0 +1,8 @@
+# name                      GitHub repository                      file         commit
+# Updated automatically by CI, unless the new script touches the system.
+ml4w-dotfiles-settings      mylinuxforwork/ml4w-dotfiles-settings  Makefile     9199d4b76fafce81fe68aab67ee8f29136e4ec6d
+ml4w-quickshell-overview    mylinuxforwork/ml4w-quickshell-overview install.sh  2ee24d35ed7a32e022e760ca13c508d6f1bd9c0f
+hypr-app-switcher           anshifmonz/hypr-app-switcher           install.sh   8aca39560652c8f1f724d29517e9ba1cee3d9b83
+ml4w-dock                   mylinuxforwork/ml4w-dock               install.sh   52e9d5a10817abe79989e19a53c93e0c4a7a2673
+ml4w-powermenu              mylinuxforwork/ml4w-powermenu          install.sh   2f6ed3658c71a01d0031d10c17dad4eda00413d4
+ml4w-walker                 mylinuxforwork/ml4w-walker             install.sh   1b3e1bd0b84c75ac8538527fd7f3513daee301c1

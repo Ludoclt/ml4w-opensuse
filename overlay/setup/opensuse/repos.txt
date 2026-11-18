@@ -1,0 +1,13 @@
+# ------------------------------------------------------------------
+# Extra repositories: alias | priority | url
+#
+# Priority > 99 (the default of the official repositories) = LOWER priority:
+# zypper only uses them for packages missing from the official
+# repositories, and never replaces a system package with their version.
+#
+# Upstream also adds X11:Wayland, X11:fonts, KDE:Qt6 and a duplicate of the
+# OSS repository: deliberately left out here.
+# ------------------------------------------------------------------
+danklinux | 120 | https://download.opensuse.org/repositories/home:/AvengeMedia:/danklinux/openSUSE_Tumbleweed/
+alxhr0    | 120 | https://download.opensuse.org/repositories/home:/Alxhr0/openSUSE_Tumbleweed/
+brave     | 120 | https://brave-browser-rpm-release.s3.brave.com/x86_64/
