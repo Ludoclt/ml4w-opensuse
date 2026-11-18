@@ -3,7 +3,7 @@
 # These are the applications opened by ML4W shortcuts and menus
 # (~/.config/ml4w/settings).
 
-kitty               # terminal
+kitty kitty-shell-integration   # terminal (+ the script kitty needs to load ~/.bashrc)
 neovim              # terminal editor
 nautilus            # file manager (also extracts archives)
 gnome-text-editor   # text editor / notes (settings/editor.sh)

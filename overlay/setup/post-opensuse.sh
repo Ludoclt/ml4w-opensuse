@@ -52,6 +52,16 @@ if [ -n "${ML4W_SUSE_BROWSER:-}" ]; then
     xdg-settings set default-web-browser "$ML4W_SUSE_BROWSER.desktop" 2> /dev/null || true
 fi
 
+# --- Sidebar button in the "default" and "starter" Waybar themes -------
+# Upstream still points these two themes to the old sidebar (a missing
+# script and a Flatpak); the other themes use the Quickshell sidebar.
+_wb="$repo_path/dotfiles/.config/waybar/themes"
+sed -i -e 's#"sleep 0.1 \&\& ~/.config/ml4w/settings/ml4w-sidebar.sh"#"qs ipc call sidebar toggle"#' \
+    -e 's#"sleep 0.1 \&\& com.ml4w.welcome"#"qs ipc call welcome toggle"#' "$_wb/default/config"
+sed -i -e 's#"flatpak run com.ml4w.sidebar"#"qs ipc call sidebar toggle"#' \
+    -e 's#"flatpak run com.ml4w.welcome"#"qs ipc call welcome toggle"#' "$_wb/starter/modules.json"
+unset _wb
+
 # --- openSUSE logo instead of the ML4W logo ---------------------------
 # The logo is downloaded from the official openSUSE repository instead of
 # being committed here (registered trademark, "all rights reserved").

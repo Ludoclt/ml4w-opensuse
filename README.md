@@ -71,6 +71,16 @@ sudo systemctl set-default graphical.target
 ```
 The lock screen is hyprlock (graphical, configured by ML4W).
 
+**Keyring unlocked at login** (so Brave and other apps don't ask for the keyring password): add the gnome-keyring PAM module to greetd's PAM stack, once, by hand:
+```bash
+# openSUSE ships vendor PAM files in /usr/lib/pam.d; local overrides go in /etc/pam.d
+[ -f /etc/pam.d/greetd ] || sudo cp /usr/lib/pam.d/greetd /etc/pam.d/greetd
+sudoedit /etc/pam.d/greetd
+#   after the last "auth" line:      auth     optional  pam_gnome_keyring.so
+#   after the last "session" line:   session  optional  pam_gnome_keyring.so auto_start
+```
+The keyring password must be the same as your login password.
+
 ## Customization
 
 - Packages: `overlay/setup/opensuse/packages.txt` (system) and `apps.txt` (applications installed once).
