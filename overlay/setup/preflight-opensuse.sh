@@ -15,11 +15,15 @@ source "$repo_path/setup/opensuse/lists.sh"
 ensure_sudo 2> /dev/null || sudo -v
 
 # --- Extra repositories (low priority) ------------------------------
-while read -r _alias _prio _url; do
+while read -r _alias _prio _url _key; do
     if [ -f "/etc/zypp/repos.d/$_alias.repo" ]; then
         sudo zypper --quiet modifyrepo --priority "$_prio" "$_alias"
     else
         info "Adding repository $_alias (priority $_prio)"
+        if [ -n "$_key" ]; then
+            info "Importing the signing key of $_alias from $_key"
+            sudo rpm --import "$_key"
+        fi
         sudo zypper addrepo --refresh --priority "$_prio" "$_url" "$_alias"
         # Interactive refresh: zypper shows the repository key fingerprint.
         # Check it before accepting (no automatic key import).
@@ -54,4 +58,4 @@ if ! systemctl is-enabled --quiet NetworkManager 2> /dev/null; then
     fi
 fi
 
-unset _alias _prio _url _suse_pkgs _suse_apps _svc
+unset _alias _prio _url _key _suse_pkgs _suse_apps _svc

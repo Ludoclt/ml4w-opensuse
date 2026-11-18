@@ -20,33 +20,62 @@ source "$SUSE_DIR/lists.sh"
 fail=0
 z() { zypper --non-interactive --gpg-auto-import-keys "$@"; }
 
-# Refresh all repositories, retrying while a mirror is out of sync
-refresh_all() {
-    local attempt
-    for attempt in 1 2 3 4 5; do
-        z refresh && return 0
-        echo "Repository refresh failed (attempt $attempt/5), retrying in 60 s..."
-        z clean --all > /dev/null 2>&1
-        sleep 60
-    done
-    return 1
-}
-
-echo "::group::Repositories"
-while read -r alias prio url; do
-    z addrepo --refresh --priority "$prio" "$url" "$alias" > /dev/null
-done < <(suse_repos)
-if ! refresh_all; then
-    echo "::endgroup::"
-    echo "⚠ Could not refresh the repositories (Tumbleweed mirror out of sync?). Checks skipped."
-    exit 2
-fi
-zypper --non-interactive repos --priority
-echo "::endgroup::"
-
 declare -A extra_alias=() allowed_extra=()
 while read -r alias _; do extra_alias[$alias]=1; done < <(suse_repos)
 while read -r name alias; do allowed_extra[$name]=$alias; done < <(suse_extra_packages)
+
+# Enabled repositories that ship with the image (official ones)
+official_aliases() {
+    local _n alias _rest
+    zypper --non-interactive repos --show-enabled-only 2> /dev/null |
+        while IFS='|' read -r _n alias _rest; do
+            alias=${alias//[[:space:]]/}
+            [ -z "$alias" ] || [ "$alias" = "Alias" ] || [ -n "${extra_alias[$alias]:-}" ] && continue
+            echo "$alias"
+        done
+}
+
+# Switch the official repositories between download.opensuse.org and
+# cdn.opensuse.org: when one is out of sync, the other usually is not.
+toggle_mirror_host() {
+    sed -i -e 's#//download\.opensuse\.org/#//@HOST@/#' \
+        -e 's#//cdn\.opensuse\.org/#//download.opensuse.org/#' \
+        -e 's#//@HOST@/#//cdn.opensuse.org/#' /etc/zypp/repos.d/*.repo
+}
+
+echo "::group::Repositories"
+mapfile -t official < <(official_aliases)
+refreshed=false
+for attempt in 1 2 3 4 5 6; do
+    if z refresh "${official[@]}"; then
+        refreshed=true
+        break
+    fi
+    echo "Official repositories could not be refreshed (attempt $attempt/6), switching mirror host and retrying in 30 s..."
+    toggle_mirror_host
+    z clean --all > /dev/null 2>&1
+    sleep 30
+done
+if [ "$refreshed" = false ]; then
+    echo "::endgroup::"
+    echo "⚠ Could not refresh the official Tumbleweed repositories (mirrors out of sync?). Checks skipped."
+    exit 2
+fi
+
+# Extra repositories: a failure here is a problem in repos.txt, not in the mirrors
+while read -r alias prio url key; do
+    if [ -n "$key" ] && ! rpm --import "$key"; then
+        echo "✗ repository $alias: cannot import its signing key from $key"
+        fail=1
+    fi
+    z addrepo --refresh --priority "$prio" "$url" "$alias" > /dev/null
+    if ! z refresh "$alias"; then
+        echo "✗ repository $alias: cannot be refreshed ($url)"
+        fail=1
+    fi
+done < <(suse_repos)
+zypper --non-interactive repos --priority --uri
+echo "::endgroup::"
 
 # Repositories (aliases) in which a name, package or capability, is available
 repos_for() {

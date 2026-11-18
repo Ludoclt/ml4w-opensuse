@@ -25,14 +25,14 @@ suse_extra_packages() {
         "$SUSE_DIR/packages.txt"
 }
 
-# Extra repositories: "alias priority url"
+# Extra repositories: "alias priority url key_url" (key_url may be empty)
 suse_repos() {
-    local line alias prio url
+    local line alias prio url key
     while IFS= read -r line || [ -n "$line" ]; do
         line=${line%%#*}
         [[ "$line" == *"|"*"|"* ]] || continue
-        IFS='|' read -r alias prio url <<< "$line"
-        echo "${alias//[[:space:]]/} ${prio//[[:space:]]/} ${url//[[:space:]]/}"
+        IFS='|' read -r alias prio url key <<< "$line"
+        echo "${alias//[[:space:]]/} ${prio//[[:space:]]/} ${url//[[:space:]]/} ${key//[[:space:]]/}"
     done < "$SUSE_DIR/repos.txt"
 }
 

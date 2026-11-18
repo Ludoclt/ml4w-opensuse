@@ -50,7 +50,7 @@ make -C ml4w-dotfiles-installer install          # into ~/.local/bin
   https://raw.githubusercontent.com/Ludoclt/ml4w-opensuse/stable/ml4w-opensuse.dotinst
 ```
 
-During the installation, zypper asks you to trust the keys of the `danklinux`, `alxhr0` and `brave` repositories: check the fingerprints against the OBS project pages and Brave's documentation.
+During the installation, zypper asks you to trust the keys of the `danklinux` and `alxhr0` repositories: check the fingerprints against their OBS project pages. Brave's signing key is imported from Brave's official URL (4th field in `repos.txt`), as documented by Brave.
 
 **Update**: run the same `--install` command (the installer detects the update, backs up the profile and offers to keep your settings).
 
@@ -69,7 +69,7 @@ The lock screen is hyprlock (graphical, configured by ML4W).
 ## Customization
 
 - Packages: `overlay/setup/opensuse/packages.txt` (system) and `apps.txt` (applications installed once).
-- Extra repositories: `overlay/setup/opensuse/repos.txt` (`alias | priority | url`, priority > 99).
+- Extra repositories: `overlay/setup/opensuse/repos.txt` (`alias | priority | url [| signing key url]`, priority > 99).
 - Logo, browser, pywalfox, matugen: `overlay/setup/opensuse/options.sh`.
 - Local test without publishing:
   ```bash
