@@ -4,7 +4,7 @@ A fork of [ML4W OS](https://github.com/mylinuxforwork/dotfiles) (Stephan Raabe's
 
 | Upstream (openSUSE setup) | This fork |
 |---|---|
-| Adds X11:Wayland, X11:fonts, KDE:Qt6 and a duplicate of the OSS repository | Official repositories only, plus a few extra repositories **at low priority** (quickshell, awww, Brave) |
+| Adds X11:Wayland, X11:fonts, KDE:Qt6, a duplicate of the OSS repository and two `home:` repositories | Official repositories only, plus Brave's official repository **at low priority** |
 | `zypper install` one package at a time, with Recommends | A single `zypper install --no-recommends` transaction |
 | Unneeded packages (vlc, figlet, htop, xclip, zsh, tesseract, sddm…), reinstalled on every update | Curated list: `setup/opensuse/packages.txt` |
 | Fonts copied to `/usr/share/fonts`, grimblast to `/usr/local` (with sudo) | Everything that is not an RPM goes to `~/.local` |
@@ -42,15 +42,20 @@ When an issue is opened: read the diff, adapt `overlay/` if needed (e.g. add a p
 
 ## Installation on openSUSE Tumbleweed
 
+The installation uses ML4W's own installer program (upstream, not forked: it only reads
+a `.dotinst` profile and deploys it), pointed at this fork's profile:
+
 ```bash
 sudo zypper install git make curl jq gum
+# 1. the installer program (upstream ML4W tool, installed into ~/.local/bin)
 git clone https://github.com/mylinuxforwork/ml4w-dotfiles-installer.git
-make -C ml4w-dotfiles-installer install          # into ~/.local/bin
+make -C ml4w-dotfiles-installer install
+# 2. this fork's profile, which points to the stable branch of this repository
 ~/.local/bin/ml4w-dotfiles-installer --install \
   https://raw.githubusercontent.com/Ludoclt/ml4w-opensuse/stable/ml4w-opensuse.dotinst
 ```
 
-During the installation, zypper asks you to trust the keys of the `danklinux` and `alxhr0` repositories: check the fingerprints against their OBS project pages. Brave's signing key is imported from Brave's official URL (4th field in `repos.txt`), as documented by Brave.
+Brave's signing key is imported from Brave's official URL (4th field in `repos.txt`), as documented by Brave.
 
 **Update**: run the same `--install` command (the installer detects the update, backs up the profile and offers to keep your settings).
 

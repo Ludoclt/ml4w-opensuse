@@ -16,9 +16,7 @@ hyprland hyprlock hypridle hyprpicker hyprsunset hyprland-qtutils
 xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
 
 # --- Desktop shell, bar, notifications, launcher, wallpaper ---
-quickshell    # @danklinux
-awww          # @alxhr0
-waybar rofi SwayNotificationCenter
+quickshell awww waybar rofi SwayNotificationCenter
 
 # --- Tools used by the ML4W scripts and the installer ---
 git curl wget rsync unzip tar jq gum make gcc cargo
@@ -31,7 +29,7 @@ libgtk-4-1 libgtk4-layer-shell0 libpoppler-glib8
 
 # --- nwg-displays (installed with pipx --system-site-packages) ---
 python3-pipx python3-gobject python3-gobject-Gdk python3-i3ipc
-gtk3 gtk-layer-shell typelib-1_0-Gtk-3_0 typelib-1_0-GtkLayerShell-0_1
+gtk3 typelib-1_0-Gtk-3_0 typelib-1_0-GtkLayerShell-0_1
 
 # --- Wi-Fi / network: service, nmtui, graphical editor, tray icon ---
 NetworkManager NetworkManager-tui NetworkManager-connection-editor NetworkManager-applet
