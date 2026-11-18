@@ -1,0 +1,12 @@
+# Suggested applications, installed ONCE (initial installation only).
+# You can uninstall them afterwards: no update will reinstall them.
+# These are the applications opened by ML4W shortcuts and menus
+# (~/.config/ml4w/settings).
+
+kitty               # terminal
+neovim              # terminal editor
+nautilus            # file manager (also extracts archives)
+gnome-text-editor   # text editor / notes (settings/editor.sh)
+gnome-calculator    # calculator (settings/calculator.sh)
+loupe               # image viewer
+papers              # PDF viewer

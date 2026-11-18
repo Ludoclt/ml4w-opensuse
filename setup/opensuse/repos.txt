@@ -1,0 +1,16 @@
+# ------------------------------------------------------------------
+# Extra repositories: alias | priority | url [| signing key url]
+#
+# Priority > 99 (the default of the official repositories) = LOWER priority:
+# zypper only uses them for packages missing from the official
+# repositories, and never replaces a system package with their version.
+#
+# Upstream also adds X11:Wayland, X11:fonts, KDE:Qt6, a duplicate of the
+# OSS repository and two home: repositories (quickshell and awww, which are
+# now in the official repositories): deliberately left out here.
+#
+# The optional 4th field is the repository's signing key, imported with
+# rpm --import before the first refresh (for repositories whose key zypper
+# cannot find on its own, like Brave's).
+# ------------------------------------------------------------------
+brave     | 120 | https://brave-browser-rpm-release.s3.brave.com/x86_64/ | https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
